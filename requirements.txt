@@ -1,0 +1,6 @@
+chumpy==0.66
+numpy==1.11.1
+opendr==0.74
+scipy==0.17.1
+PyQt4==4.11.4
+cv2==1.0
