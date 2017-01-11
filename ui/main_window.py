@@ -15,8 +15,8 @@ from gen.main_window import Ui_MainWindow as Ui_MainWindow_Base
 from camera_widget import Ui_CameraWidget
 from smpl.smpl_webuser.serialization import load_model
 
-class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
 
+class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
     def __init__(self):
         super(self.__class__, self).__init__()
         self.setupUi(self)
@@ -28,13 +28,16 @@ class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
         self._update_canvas = False
 
         self.camera = ProjectPoints(rt=np.zeros(3), t=np.zeros(3))
+        self.joints2d = ProjectPoints(rt=np.zeros(3), t=np.zeros(3))
         self.frustum = {'near': 0.1, 'far': 1000., 'width': 100, 'height': 30}
-        self.light = LambertianPointLight(vc=np.array([1., 1., 1.]), light_color=np.array([1., 1., 1.]))
+        self.light = LambertianPointLight(vc=np.array([0.94, 0.94, 0.94]), light_color=np.array([1., 1., 1.]))
         self.rn = ColoredRenderer(bgcolor=np.zeros(3), frustum=self.frustum, camera=self.camera, vc=self.light)
 
         self.model = None
         self._init_model('f')
         self.model.pose[0] = np.pi
+
+        self.joints2d.set(v=self.model.J_transformed)
 
         self.camera_widget = Ui_CameraWidget(self.camera, self.frustum, self.draw)
         self.btn_camera.clicked.connect(lambda: self._show_camera_widget())
@@ -66,6 +69,10 @@ class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
         self.action_save_screenshot.triggered.connect(self._save_screenshot_dialog)
         self.action_save_mesh.triggered.connect(self._save_mesh_dialog)
 
+        self.view_joints.triggered.connect(self.draw)
+        self.view_joint_ids.triggered.connect(self.draw)
+        self.view_bones.triggered.connect(self.draw)
+
         self._update_canvas = True
 
     def showEvent(self, event):
@@ -82,10 +89,33 @@ class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
 
     def draw(self):
         if self._update_canvas:
-            img = self.rn.r
+            img = np.array(self.rn.r)
+
+            if self.view_joints.isChecked() or self.view_joint_ids.isChecked() or self.view_bones.isChecked():
+                img = self._draw_annotations(img)
 
             self.canvas.setScaledContents(False)
             self.canvas.setPixmap(self._to_pixmap(img))
+
+    def _draw_annotations(self, img):
+        self.joints2d.set(t=self.camera.t, rt=self.camera.rt, f=self.camera.f, c=self.camera.c, k=self.camera.k)
+
+        if self.view_bones.isChecked():
+            kintree = self.model.kintree_table[:, 1:]
+            for k in range(kintree.shape[1]):
+                cv2.line(img, (int(self.joints2d.r[kintree[0, k], 0]), int(self.joints2d.r[kintree[0, k], 1])),
+                         (int(self.joints2d.r[kintree[1, k], 0]), int(self.joints2d.r[kintree[1, k], 1])),
+                         (0.24, 0.29, 0.91), 2)
+
+        if self.view_joints.isChecked():
+            for j in self.joints2d.r:
+                cv2.circle(img, (int(j[0]), int(j[1])), 4, (0.38, 0.68, 0.15), -1)
+
+        if self.view_joint_ids.isChecked():
+            for k, j in enumerate(self.joints2d.r):
+                cv2.putText(img, str(k), (int(j[0]), int(j[1])), cv2.FONT_HERSHEY_PLAIN, 1.2, (1, 1, 1))
+
+        return img
 
     def _init_model(self, g):
         pose = None
@@ -132,7 +162,7 @@ class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
             self.frustum['width'] = w
             self.frustum['height'] = h
 
-            self.light.set(light_pos=Rodrigues(self.camera.rt).T.dot(self.camera.t)*-10.)
+            self.light.set(light_pos=Rodrigues(self.camera.rt).T.dot(self.camera.t) * -10.)
             self.rn.set(frustum=self.frustum, camera=self.camera)
 
             self.draw()
@@ -196,7 +226,10 @@ class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
     def _save_screenshot_dialog(self):
         filename = QtGui.QFileDialog.getSaveFileName(self, 'Save screenshot', '~', 'Images (*.png *.jpg *.ppm)')
         if filename:
-            cv2.imwrite(str(filename), np.uint8(self.rn.r * 255))
+            img = np.array(self.rn.r)
+            if self.view_joints.isChecked() or self.view_joint_ids.isChecked() or self.view_bones.isChecked():
+                img = self._draw_annotations(img)
+            cv2.imwrite(str(filename), np.uint8(img * 255))
 
     def _save_mesh_dialog(self):
         filename = QtGui.QFileDialog.getSaveFileName(self, 'Save mesh', '~', 'Mesh (*.obj)')
@@ -225,12 +258,12 @@ class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
 
     def _move(self, event):
         if self._moving:
-            delta = event.pos()-self._mouse_begin_pos
+            delta = event.pos() - self._mouse_begin_pos
             self.camera_widget.pos_0.setValue(self.camera_widget.pos_0.value() + delta.x() / 500.)
             self.camera_widget.pos_1.setValue(self.camera_widget.pos_1.value() + delta.y() / 500.)
             self._mouse_begin_pos = event.pos()
         elif self._rotating:
-            delta = event.pos()-self._mouse_begin_pos
+            delta = event.pos() - self._mouse_begin_pos
             self.camera_widget.rot_0.setValue(self.camera_widget.rot_0.value() + delta.y() / 300.)
             self.camera_widget.rot_1.setValue(self.camera_widget.rot_1.value() - delta.x() / 300.)
             self._mouse_begin_pos = event.pos()
