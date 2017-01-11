@@ -37,8 +37,6 @@ class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
         self._init_model('f')
         self.model.pose[0] = np.pi
 
-        self.joints2d.set(v=self.model.J_transformed)
-
         self.camera_widget = Ui_CameraWidget(self.camera, self.frustum, self.draw)
         self.btn_camera.clicked.connect(lambda: self._show_camera_widget())
 
@@ -141,6 +139,7 @@ class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
         self.light.set(v=self.model, f=self.model.f, num_verts=len(self.model))
         self.rn.set(v=self.model, f=self.model.f)
         self.camera.set(v=self.model)
+        self.joints2d.set(v=self.model.J_transformed)
 
         self.draw()
 
