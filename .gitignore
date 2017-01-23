@@ -1,3 +1,4 @@
 .idea/
 smpl/
 *.pyc
+.DS_Store

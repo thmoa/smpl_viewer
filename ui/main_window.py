@@ -31,7 +31,8 @@ class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
         self.joints2d = ProjectPoints(rt=np.zeros(3), t=np.zeros(3))
         self.frustum = {'near': 0.1, 'far': 1000., 'width': 100, 'height': 30}
         self.light = LambertianPointLight(vc=np.array([0.94, 0.94, 0.94]), light_color=np.array([1., 1., 1.]))
-        self.rn = ColoredRenderer(bgcolor=np.zeros(3), frustum=self.frustum, camera=self.camera, vc=self.light)
+        self.rn = ColoredRenderer(bgcolor=np.zeros(3), frustum=self.frustum, camera=self.camera, vc=self.light,
+                                  overdraw=False)
 
         self.model = None
         self._init_model('f')
