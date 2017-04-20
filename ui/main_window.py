@@ -6,7 +6,7 @@ import numpy as np
 import cv2
 import ConfigParser
 
-from PyQt4 import QtGui
+from PyQt5 import QtGui, QtWidgets
 from opendr.camera import ProjectPoints, Rodrigues
 from opendr.renderer import ColoredRenderer
 from opendr.lighting import LambertianPointLight
@@ -16,7 +16,7 @@ from camera_widget import Ui_CameraWidget
 from smpl.smpl_webuser.serialization import load_model
 
 
-class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
+class Ui_MainWindow(QtWidgets.QMainWindow, Ui_MainWindow_Base):
     def __init__(self):
         super(self.__class__, self).__init__()
         self.setupUi(self)
@@ -31,7 +31,7 @@ class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
         self.joints2d = ProjectPoints(rt=np.zeros(3), t=np.zeros(3))
         self.frustum = {'near': 0.1, 'far': 1000., 'width': 100, 'height': 30}
         self.light = LambertianPointLight(vc=np.array([0.94, 0.94, 0.94]), light_color=np.array([1., 1., 1.]))
-        self.rn = ColoredRenderer(bgcolor=np.zeros(3), frustum=self.frustum, camera=self.camera, vc=self.light,
+        self.rn = ColoredRenderer(bgcolor=np.ones(3), frustum=self.frustum, camera=self.camera, vc=self.light,
                                   overdraw=False)
 
         self.model = None
@@ -104,15 +104,15 @@ class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
             for k in range(kintree.shape[1]):
                 cv2.line(img, (int(self.joints2d.r[kintree[0, k], 0]), int(self.joints2d.r[kintree[0, k], 1])),
                          (int(self.joints2d.r[kintree[1, k], 0]), int(self.joints2d.r[kintree[1, k], 1])),
-                         (0.24, 0.29, 0.91), 2)
+                         (0.98, 0.98, 0.98), 3)
 
         if self.view_joints.isChecked():
             for j in self.joints2d.r:
-                cv2.circle(img, (int(j[0]), int(j[1])), 4, (0.38, 0.68, 0.15), -1)
+                cv2.circle(img, (int(j[0]), int(j[1])), 5, (0.38, 0.68, 0.15), -1)
 
         if self.view_joint_ids.isChecked():
             for k, j in enumerate(self.joints2d.r):
-                cv2.putText(img, str(k), (int(j[0]), int(j[1])), cv2.FONT_HERSHEY_PLAIN, 1.2, (1, 1, 1))
+                cv2.putText(img, str(k), (int(j[0]), int(j[1])), cv2.FONT_HERSHEY_DUPLEX, 0.6, (0.3, 0.23, 0.9), 2)
 
         return img
 
@@ -168,7 +168,7 @@ class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
             self.draw()
 
     def _save_config_dialog(self):
-        filename = QtGui.QFileDialog.getSaveFileName(self, 'Save config', '~', 'Config File (*.ini)')
+        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, 'Save config', None, 'Config File (*.ini)')
         if filename:
             with open(str(filename), 'w') as fp:
                 config = ConfigParser.ConfigParser()
@@ -182,12 +182,14 @@ class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
                 config.set('Camera', 'translation', ','.join(str(t) for t in self.camera.t.r))
                 config.set('Camera', 'rotation', ','.join(str(r) for r in self.camera.rt.r))
                 config.set('Camera', 'focal_length', self.camera_widget.focal_len.value())
+                config.set('Camera', 'center', '{},{}'.format(self.camera_widget.center_0.value(),
+                                                              self.camera_widget.center_1.value()))
                 config.set('Camera', 'distortion', ','.join(str(r) for r in self.camera.k.r))
 
                 config.write(fp)
 
     def _open_config_dialog(self):
-        filename = QtGui.QFileDialog.getOpenFileName(self, 'Load config', '~', 'Config File (*.ini)')
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Load config', None, 'Config File (*.ini)')
         if filename:
             config = ConfigParser.ConfigParser()
             config.read(str(filename))
@@ -216,15 +218,16 @@ class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
             cam_pos = np.fromstring(config.get('Camera', 'translation'), dtype=np.float64, sep=',')
             cam_rot = np.fromstring(config.get('Camera', 'rotation'), dtype=np.float64, sep=',')
             cam_dist = np.fromstring(config.get('Camera', 'distortion'), dtype=np.float64, sep=',')
+            cam_c = np.fromstring(config.get('Camera', 'center'), dtype=np.float64, sep=',')
             cam_f = config.getfloat('Camera', 'focal_length')
-
-            self.camera_widget.set_values(cam_pos, cam_rot, cam_f, cam_dist)
+            print cam_c
+            self.camera_widget.set_values(cam_pos, cam_rot, cam_f, cam_c, cam_dist)
 
             self._update_canvas = True
             self.draw()
 
     def _save_screenshot_dialog(self):
-        filename = QtGui.QFileDialog.getSaveFileName(self, 'Save screenshot', '~', 'Images (*.png *.jpg *.ppm)')
+        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, 'Save screenshot', None, 'Images (*.png *.jpg *.ppm)')
         if filename:
             img = np.array(self.rn.r)
             if self.view_joints.isChecked() or self.view_joint_ids.isChecked() or self.view_bones.isChecked():
@@ -232,7 +235,7 @@ class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
             cv2.imwrite(str(filename), np.uint8(img * 255))
 
     def _save_mesh_dialog(self):
-        filename = QtGui.QFileDialog.getSaveFileName(self, 'Save mesh', '~', 'Mesh (*.obj)')
+        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, 'Save mesh', None, 'Mesh (*.obj)')
         if filename:
             with open(filename, 'w') as fp:
                 for v in self.model.r:
@@ -242,7 +245,7 @@ class Ui_MainWindow(QtGui.QMainWindow, Ui_MainWindow_Base):
                     fp.write('f %d %d %d\n' % (f[0], f[1], f[2]))
 
     def _zoom(self, event):
-        delta = -event.delta() / 1200.0
+        delta = -event.angleDelta().y() / 1200.0
         self.camera_widget.pos_2.setValue(self.camera_widget.pos_2.value() + delta)
 
     def _mouse_begin(self, event):

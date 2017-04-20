@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 from ui.main_window import Ui_MainWindow
 
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     form = Ui_MainWindow()
     form.show()
     form.raise_()

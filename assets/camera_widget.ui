@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>386</width>
-    <height>267</height>
+    <height>311</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,18 +40,41 @@
     </property>
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="9" column="4" colspan="2">
-       <widget class="QPushButton" name="reset">
-        <property name="styleSheet">
-         <string notr="true">font: 11pt;</string>
+      <item row="4" column="3">
+       <widget class="QDoubleSpinBox" name="focal_len">
+        <property name="minimum">
+         <double>0.100000000000000</double>
         </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="value">
+         <double>1.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" colspan="2">
+       <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Reset Camera</string>
+         <string>Focal length</string>
         </property>
        </widget>
       </item>
-      <item row="6" column="5">
-       <widget class="QDoubleSpinBox" name="dist_0">
+      <item row="7" column="1" colspan="5">
+       <spacer name="verticalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="3">
+       <widget class="QDoubleSpinBox" name="pos_0">
         <property name="minimum">
          <double>-99.989999999999995</double>
         </property>
@@ -60,8 +83,8 @@
         </property>
        </widget>
       </item>
-      <item row="6" column="3">
-       <widget class="QDoubleSpinBox" name="dist_2">
+      <item row="2" column="5">
+       <widget class="QDoubleSpinBox" name="rot_2">
         <property name="minimum">
          <double>-99.989999999999995</double>
         </property>
@@ -70,8 +93,8 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="3">
-       <widget class="QDoubleSpinBox" name="dist_3">
+      <item row="2" column="4">
+       <widget class="QDoubleSpinBox" name="rot_1">
         <property name="minimum">
          <double>-99.989999999999995</double>
         </property>
@@ -80,23 +103,30 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="4">
-       <widget class="QDoubleSpinBox" name="dist_4">
-        <property name="minimum">
-         <double>-99.989999999999995</double>
+      <item row="3" column="1" colspan="5">
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
         </property>
-        <property name="singleStep">
-         <double>0.100000000000000</double>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="8" column="1" colspan="2">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Distortion</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="4">
-       <widget class="QDoubleSpinBox" name="pos_1">
-        <property name="minimum">
-         <double>-99.989999999999995</double>
-        </property>
-        <property name="singleStep">
-         <double>0.100000000000000</double>
+      <item row="2" column="1" colspan="2">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Rotation</string>
         </property>
        </widget>
       </item>
@@ -116,22 +146,68 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1" colspan="2">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Rotation</string>
+      <item row="0" column="4">
+       <widget class="QDoubleSpinBox" name="pos_1">
+        <property name="minimum">
+         <double>-99.989999999999995</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
         </property>
        </widget>
       </item>
-      <item row="6" column="1" colspan="2">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Distortion</string>
+      <item row="9" column="4">
+       <widget class="QDoubleSpinBox" name="dist_4">
+        <property name="minimum">
+         <double>-99.989999999999995</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
         </property>
        </widget>
       </item>
-      <item row="3" column="1" colspan="5">
-       <spacer name="verticalSpacer_3">
+      <item row="9" column="3">
+       <widget class="QDoubleSpinBox" name="dist_3">
+        <property name="minimum">
+         <double>-99.989999999999995</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="3">
+       <widget class="QDoubleSpinBox" name="dist_2">
+        <property name="minimum">
+         <double>-99.989999999999995</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="5">
+       <widget class="QDoubleSpinBox" name="dist_0">
+        <property name="minimum">
+         <double>-99.989999999999995</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="4" colspan="2">
+       <widget class="QPushButton" name="reset">
+        <property name="styleSheet">
+         <string notr="true">font: 11pt;</string>
+        </property>
+        <property name="text">
+         <string>Reset Camera</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="1" colspan="5">
+       <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -143,27 +219,20 @@
         </property>
        </spacer>
       </item>
-      <item row="2" column="4">
-       <widget class="QDoubleSpinBox" name="rot_1">
-        <property name="minimum">
-         <double>-99.989999999999995</double>
+      <item row="1" column="1" colspan="5">
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
         </property>
-        <property name="singleStep">
-         <double>0.100000000000000</double>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
         </property>
-       </widget>
+       </spacer>
       </item>
-      <item row="2" column="5">
-       <widget class="QDoubleSpinBox" name="rot_2">
-        <property name="minimum">
-         <double>-99.989999999999995</double>
-        </property>
-        <property name="singleStep">
-         <double>0.100000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="4">
+      <item row="8" column="4">
        <widget class="QDoubleSpinBox" name="dist_1">
         <property name="minimum">
          <double>-99.989999999999995</double>
@@ -186,49 +255,6 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="1" colspan="2">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Focal length</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="3">
-       <widget class="QDoubleSpinBox" name="focal_len">
-        <property name="minimum">
-         <double>0.100000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.100000000000000</double>
-        </property>
-        <property name="value">
-         <double>1.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3">
-       <widget class="QDoubleSpinBox" name="pos_0">
-        <property name="minimum">
-         <double>-99.989999999999995</double>
-        </property>
-        <property name="singleStep">
-         <double>0.100000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1" colspan="5">
-       <spacer name="verticalSpacer_4">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item row="0" column="1" colspan="2">
        <widget class="QLabel" name="label">
         <property name="text">
@@ -236,8 +262,8 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1" colspan="5">
-       <spacer name="verticalSpacer_2">
+      <item row="5" column="1" colspan="5">
+       <spacer name="verticalSpacer_5">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -249,18 +275,44 @@
         </property>
        </spacer>
       </item>
-      <item row="8" column="1" colspan="5">
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
+      <item row="6" column="1" colspan="2">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Center</string>
         </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
+       </widget>
+      </item>
+      <item row="6" column="3">
+       <widget class="QDoubleSpinBox" name="center_0">
+        <property name="minimum">
+         <double>0.100000000000000</double>
         </property>
-       </spacer>
+        <property name="maximum">
+         <double>0.900000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.010000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.500000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="4">
+       <widget class="QDoubleSpinBox" name="center_1">
+        <property name="minimum">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>0.900000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.010000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.500000000000000</double>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

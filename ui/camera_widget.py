@@ -3,12 +3,12 @@
 
 import numpy as np
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from gen.camera_widget import Ui_CameraWidget as Ui_CameraWidget_Base
 
 
-class Ui_CameraWidget(QtGui.QMainWindow, Ui_CameraWidget_Base):
+class Ui_CameraWidget(QtWidgets.QMainWindow, Ui_CameraWidget_Base):
 
     def __init__(self, camera, frustum, draw):
         super(self.__class__, self).__init__()
@@ -32,11 +32,14 @@ class Ui_CameraWidget(QtGui.QMainWindow, Ui_CameraWidget_Base):
         self.dist_3.valueChanged[float].connect(lambda val: self._update_distortion(3, val))
         self.dist_4.valueChanged[float].connect(lambda val: self._update_distortion(4, val))
 
+        self.center_0.valueChanged[float].connect(lambda val: self._update_center(0, val))
+        self.center_1.valueChanged[float].connect(lambda val: self._update_center(1, val))
+
         self.focal_len.valueChanged[float].connect(self._update_focal_length)
 
         self.reset.clicked.connect(self._reset)
 
-    def set_values(self, pos, rot, focal_len, dist):
+    def set_values(self, pos, rot,  focal_len, c, dist):
         self.pos_0.setValue(pos[0])
         self.pos_1.setValue(pos[1])
         self.pos_2.setValue(pos[2])
@@ -51,6 +54,9 @@ class Ui_CameraWidget(QtGui.QMainWindow, Ui_CameraWidget_Base):
         self.dist_3.setValue(dist[3])
         self.dist_4.setValue(dist[4])
 
+        self.center_0.setValue(c[0])
+        self.center_1.setValue(c[1])
+
         self.focal_len.setValue(focal_len)
 
     def _update_position(self, id, val):
@@ -63,6 +69,11 @@ class Ui_CameraWidget(QtGui.QMainWindow, Ui_CameraWidget_Base):
 
     def _update_distortion(self, id, val):
         self.camera.k[id] = val
+        self.draw()
+
+    def _update_center(self, id, val):
+        d = self.frustum['width'] if id == 0 else self.frustum['height']
+        self.camera.c[id] = val * d
         self.draw()
 
     def _update_focal_length(self):
@@ -86,6 +97,9 @@ class Ui_CameraWidget(QtGui.QMainWindow, Ui_CameraWidget_Base):
         self.dist_2.setValue(0)
         self.dist_3.setValue(0)
         self.dist_4.setValue(0)
+
+        self.center_0.setValue(0.5)
+        self.center_1.setValue(0.5)
 
         self.focal_len.setValue(1)
 
